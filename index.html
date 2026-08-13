@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1f3a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Tollaslabda">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-180.png">
+  <title>Tollaslabda Sorsoló</title>
+  <style>
+    :root{
+      --navy:#0b1f3a;
+      --navy2:#132b4d;
+      --bg:#f3f6fb;
+      --card:#ffffff;
+      --text:#122033;
+      --muted:#6c7788;
+      --blue:#2767d8;
+      --green:#0da56b;
+      --orange:#f08a24;
+      --purple:#7356d9;
+      --red:#d84b4b;
+      --border:#e3e8f1;
+      --shadow:0 8px 24px rgba(22,35,55,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    body{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+    button{font:inherit}
+    .topbar{
+      position:sticky;top:0;z-index:10;
+      padding:calc(12px + env(safe-area-inset-top)) 18px 14px;
+      background:linear-gradient(180deg,var(--navy),var(--navy2));
+      color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.16)
+    }
+    .brand{font-size:21px;font-weight:800;letter-spacing:.2px}
+    .subtitle{font-size:13px;opacity:.78;margin-top:2px}
+    main{max-width:760px;margin:0 auto;padding:18px 16px 30px}
+    .screen{display:none}
+    .screen.active{display:block}
+    .section-title{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6d7888;margin:4px 2px 10px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .match-card{overflow:hidden}
+    .match-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px 18px;border-bottom:1px solid var(--border)
+    }
+    .match-header strong{font-size:19px}
+    .round-badge{font-size:13px;font-weight:700;color:#3c5069;background:#edf2f8;padding:7px 10px;border-radius:999px}
+    .team{padding:22px 18px 18px;text-align:center}
+    .team + .team{border-top:1px dashed #d9e0eb}
+    .team-label{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+    .team-a .team-label{color:var(--blue)}
+    .team-b .team-label{color:var(--orange)}
+    .names{font-size:30px;font-weight:850;line-height:1.12;letter-spacing:-.5px}
+    .plus{font-weight:500;color:#9aa4b2;margin:0 4px}
+    .win-btn{
+      width:100%;border:0;color:#fff;font-weight:900;font-size:21px;
+      padding:16px 18px;border-radius:15px;margin-top:16px;min-height:58px
+    }
+    .team-a .win-btn{background:linear-gradient(180deg,#3376e9,#245fc7)}
+    .team-b .win-btn{background:linear-gradient(180deg,#f59a3c,#e87e16)}
+    .win-btn:active{transform:scale(.99)}
+    .sitout{
+      margin-top:14px;padding:16px 18px;display:flex;align-items:center;justify-content:center;gap:9px;
+      background:#fff7dc;border:1px solid #f3df92;border-radius:16px;font-weight:800;color:#735d11
+    }
+    .sitout span{font-size:19px}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .action-btn{
+      min-height:52px;border-radius:14px;border:1px solid var(--border);
+      background:#fff;color:#2b3a4d;font-weight:800;padding:12px 10px
+    }
+    .action-btn.primary{background:#eaf2ff;border-color:#cddfff;color:#245bb6}
+    .action-btn.danger{color:var(--red)}
+    .hint{font-size:13px;color:var(--muted);text-align:center;margin:14px 8px 0;line-height:1.4}
+    .stat-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+    .mini-card{padding:14px 10px;text-align:center}
+    .mini-card .v{font-size:24px;font-weight:900}
+    .mini-card .l{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-top:3px}
+    .table-card{overflow:hidden;margin-bottom:14px}
+    .table-title{padding:15px 16px;font-weight:900;border-bottom:1px solid var(--border)}
+    .row{display:grid;grid-template-columns:1fr 64px 64px;gap:8px;align-items:center;padding:13px 16px;border-bottom:1px solid #edf0f5}
+    .row:last-child{border-bottom:0}
+    .row.head{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:#fafbfd;padding-top:10px;padding-bottom:10px}
+    .row .name{font-weight:800;min-width:0}
+    .row .num{text-align:right;font-weight:800}
+    .rank{display:inline-flex;width:24px;height:24px;border-radius:50%;align-items:center;justify-content:center;background:#eef2f7;margin-right:8px;font-size:12px}
+    .history-item{padding:14px 16px;border-bottom:1px solid var(--border)}
+    .history-item:last-child{border-bottom:0}
+    .history-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .history-match{font-weight:850;line-height:1.35}
+    .history-time{font-size:11px;color:var(--muted);white-space:nowrap}
+    .history-result{font-size:13px;margin-top:5px;color:var(--green);font-weight:800}
+    .history-sitout{font-size:12px;color:var(--muted);margin-top:3px}
+    .empty{padding:28px 18px;text-align:center;color:var(--muted);line-height:1.5}
+    .bottom-nav{
+      position:fixed;left:0;right:0;bottom:0;z-index:20;
+      padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+      background:rgba(255,255,255,.96);border-top:1px solid var(--border);
+      display:flex;justify-content:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
+    }
+    .nav-inner{width:min(760px,100%);display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+    .nav-btn{border:0;background:transparent;color:#748093;padding:7px 4px;border-radius:12px;font-size:11px;font-weight:800}
+    .nav-btn .ico{display:block;font-size:21px;line-height:1;margin-bottom:4px}
+    .nav-btn.active{color:var(--blue);background:#edf4ff}
+    .toast{
+      position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));
+      transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;
+      background:#182739;color:#fff;padding:10px 14px;border-radius:999px;font-size:13px;font-weight:700;
+      transition:.22s ease;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.2)
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media (min-width:700px){
+      main{padding-top:24px}
+      .names{font-size:36px}
+      .team{padding:28px 26px 22px}
+      .match-card{max-width:650px;margin:0 auto}
+      .sitout,.actions,.hint{max-width:650px;margin-left:auto;margin-right:auto}
+      .stat-summary{grid-template-columns:repeat(3,1fr)}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🏸 Tollaslabda Sorsoló</div>
+    <div class="subtitle">Marc · Imi · Norbi · Máté · Laci</div>
+  </header>
+
+  <main>
+    <section id="gameScreen" class="screen active">
+      <div class="section-title">Aktuális mérkőzés</div>
+      <div class="card match-card">
+        <div class="match-header">
+          <strong>Következő meccs</strong>
+          <span id="roundBadge" class="round-badge">1. meccs</span>
+        </div>
+        <div class="team team-a">
+          <div class="team-label">Kék páros</div>
+          <div id="teamA" class="names">—</div>
+          <button id="winA" class="win-btn">NYERTÜNK</button>
+        </div>
+        <div class="team team-b">
+          <div class="team-label">Narancs páros</div>
+          <div id="teamB" class="names">—</div>
+          <button id="winB" class="win-btn">NYERTÜNK</button>
+        </div>
+      </div>
+
+      <div class="sitout">KIMARAD: <span id="sitout">—</span></div>
+
+      <div class="actions">
+        <button id="redrawBtn" class="action-btn primary">↻ Új sorsolás</button>
+        <button id="undoBtn" class="action-btn">↶ Visszavonás</button>
+      </div>
+      <div class="actions">
+        <button id="newTournamentBtn" class="action-btn danger" style="grid-column:1 / -1;">Új bajnokság – eredmények törlése</button>
+      </div>
+      <div class="hint">Az eredmények ezen a készüléken maradnak. Internetkapcsolat nélkül is használható, ha a főképernyőre telepítetted.</div>
+    </section>
+
+    <section id="statsScreen" class="screen">
+      <div class="section-title">Statisztikák</div>
+      <div class="stat-summary">
+        <div class="card mini-card"><div id="gamesCount" class="v">0</div><div class="l">Meccs</div></div>
+        <div class="card mini-card"><div id="topPlayer" class="v">—</div><div class="l">Legjobb játékos</div></div>
+        <div class="card mini-card"><div id="topPair" class="v" style="font-size:16px">—</div><div class="l">Legjobb páros</div></div>
+      </div>
+      <div class="card table-card">
+        <div class="table-title">Játékosok</div>
+        <div class="row head"><div>Játékos</div><div class="num">Győz.</div><div class="num">Meccs</div></div>
+        <div id="playerRows"></div>
+      </div>
+      <div class="card table-card">
+        <div class="table-title">Párosok</div>
+        <div class="row head"><div>Páros</div><div class="num">Győz.</div><div class="num">Meccs</div></div>
+        <div id="pairRows"></div>
+      </div>
+    </section>
+
+    <section id="historyScreen" class="screen">
+      <div class="section-title">Előzmények</div>
+      <div id="historyCard" class="card"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="nav-inner">
+      <button class="nav-btn active" data-screen="gameScreen"><span class="ico">🏸</span>Játék</button>
+      <button class="nav-btn" data-screen="statsScreen"><span class="ico">📊</span>Statisztika</button>
+      <button class="nav-btn" data-screen="historyScreen"><span class="ico">🕘</span>Előzmények</button>
+    </div>
+  </nav>
+
+  <div id="toast" class="toast">Mentve</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var PLAYERS = ["Marc","Imi","Norbi","Máté","Laci"];
+  var STORAGE_KEY = "tollaslabda-pwa-v1";
+
+  function pairKey(a,b){ return [a,b].sort().join(" + "); }
+  function matchSignature(m){
+    var p1 = pairKey(m.teamA[0],m.teamA[1]);
+    var p2 = pairKey(m.teamB[0],m.teamB[1]);
+    return [p1,p2].sort().join(" vs ");
+  }
+
+  function defaultState(){
+    return { history:[], current:null };
+  }
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return defaultState();
+      var parsed = JSON.parse(raw);
+      if(!parsed || !Array.isArray(parsed.history)) return defaultState();
+      return parsed;
+    }catch(e){
+      return defaultState();
+    }
+  }
+
+  var state = load();
+
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+  function allPairings(arr){
+    return [
+      [[arr[0],arr[1]],[arr[2],arr[3]]],
+      [[arr[0],arr[2]],[arr[1],arr[3]]],
+      [[arr[0],arr[3]],[arr[1],arr[2]]]
+    ];
+  }
+
+  function getSitoutCounts(){
+    var c={}; PLAYERS.forEach(function(p){c[p]=0;});
+    state.history.forEach(function(g){ if(c[g.sitout] !== undefined) c[g.sitout]++; });
+    return c;
+  }
+
+  function getPairPlayedCounts(){
+    var c={};
+    state.history.forEach(function(g){
+      var k1=pairKey(g.teamA[0],g.teamA[1]);
+      var k2=pairKey(g.teamB[0],g.teamB[1]);
+      c[k1]=(c[k1]||0)+1;
+      c[k2]=(c[k2]||0)+1;
+    });
+    return c;
+  }
+
+  function recentPartnersPenalty(pair){
+    var penalty=0;
+    var recent=state.history.slice(-3);
+    recent.forEach(function(g,idx){
+      var weight = idx===recent.length-1 ? 5 : 2;
+      if(pairKey(g.teamA[0],g.teamA[1])===pairKey(pair[0],pair[1])) penalty+=weight;
+      if(pairKey(g.teamB[0],g.teamB[1])===pairKey(pair[0],pair[1])) penalty+=weight;
+    });
+    return penalty;
+  }
+
+  function generateMatch(excludeSignature){
+    var sitouts=getSitoutCounts();
+    var pairPlayed=getPairPlayedCounts();
+    var candidates=[];
+    var last=state.history.length ? state.history[state.history.length-1] : null;
+
+    PLAYERS.forEach(function(sitout){
+      var active=PLAYERS.filter(function(p){return p!==sitout;});
+      allPairings(active).forEach(function(ps){
+        var m={teamA:ps[0],teamB:ps[1],sitout:sitout};
+        var sig=matchSignature(m);
+        var projected={};
+        PLAYERS.forEach(function(p){projected[p]=sitouts[p] + (p===sitout?1:0);});
+        var vals=PLAYERS.map(function(p){return projected[p];});
+        var spread=Math.max.apply(null,vals)-Math.min.apply(null,vals);
+
+        var score=0;
+        score += spread*100;
+        score += sitouts[sitout]*10;
+        score += (pairPlayed[pairKey(ps[0][0],ps[0][1])]||0)*12;
+        score += (pairPlayed[pairKey(ps[1][0],ps[1][1])]||0)*12;
+        score += recentPartnersPenalty(ps[0])*7;
+        score += recentPartnersPenalty(ps[1])*7;
+
+        if(last && last.sitout===sitout) score+=120;
+        if(last && matchSignature(last)===sig) score+=160;
+        if(excludeSignature && sig===excludeSignature) score+=200;
+
+        score += Math.random()*8;
+        candidates.push({m:m,score:score});
+      });
+    });
+
+    candidates.sort(function(a,b){return a.score-b.score;});
+    var pool=candidates.slice(0,Math.min(4,candidates.length));
+    return pool[Math.floor(Math.random()*pool.length)].m;
+  }
+
+  function ensureCurrent(){
+    if(!state.current){
+      state.current=generateMatch(null);
+      save();
+    }
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g,function(ch){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[ch];
+    });
+  }
+
+  function formatTeam(team){
+    return escapeHtml(team[0])+' <span class="plus">+</span> '+escapeHtml(team[1]);
+  }
+
+  function toast(msg){
+    var el=document.getElementById("toast");
+    el.textContent=msg;
+    el.classList.add("show");
+    clearTimeout(toast.t);
+    toast.t=setTimeout(function(){el.classList.remove("show");},1300);
+  }
+
+  function recordWinner(side){
+    ensureCurrent();
+    var g={
+      teamA:state.current.teamA.slice(),
+      teamB:state.current.teamB.slice(),
+      sitout:state.current.sitout,
+      winner:side,
+      ts:Date.now()
+    };
+    state.history.push(g);
+    state.current=generateMatch(null);
+    save();
+    renderAll();
+    toast("Eredmény rögzítve");
+  }
+
+  function undo(){
+    if(!state.history.length){
+      toast("Nincs visszavonható eredmény");
+      return;
+    }
+    var g=state.history.pop();
+    state.current={teamA:g.teamA.slice(),teamB:g.teamB.slice(),sitout:g.sitout};
+    save();
+    renderAll();
+    toast("Utolsó eredmény visszavonva");
+  }
+
+  function redraw(){
+    ensureCurrent();
+    var sig=matchSignature(state.current);
+    state.current=generateMatch(sig);
+    save();
+    renderGame();
+    toast("Új párosítás");
+  }
+
+  function newTournament(){
+    if(confirm("Biztosan törlöd az összes eredményt és új bajnokságot kezdesz?")){
+      state=defaultState();
+      ensureCurrent();
+      save();
+      renderAll();
+      switchScreen("gameScreen");
+      toast("Új bajnokság indult");
+    }
+  }
+
+  function renderGame(){
+    ensureCurrent();
+    document.getElementById("teamA").innerHTML=formatTeam(state.current.teamA);
+    document.getElementById("teamB").innerHTML=formatTeam(state.current.teamB);
+    document.getElementById("sitout").textContent=state.current.sitout;
+    document.getElementById("roundBadge").textContent=(state.history.length+1)+". meccs";
+    document.getElementById("undoBtn").disabled=!state.history.length;
+    document.getElementById("undoBtn").style.opacity=state.history.length ? "1" : ".5";
+  }
+
+  function computeStats(){
+    var players={}, pairs={};
+    PLAYERS.forEach(function(p){players[p]={wins:0,games:0};});
+
+    state.history.forEach(function(g){
+      var teams=[g.teamA,g.teamB];
+      teams.forEach(function(t){
+        t.forEach(function(p){players[p].games++;});
+        var k=pairKey(t[0],t[1]);
+        if(!pairs[k]) pairs[k]={wins:0,games:0};
+        pairs[k].games++;
+      });
+      var wt=g.winner==="A"?g.teamA:g.teamB;
+      wt.forEach(function(p){players[p].wins++;});
+      pairs[pairKey(wt[0],wt[1])].wins++;
+    });
+
+    return {players:players,pairs:pairs};
+  }
+
+  function renderStats(){
+    var s=computeStats();
+    document.getElementById("gamesCount").textContent=state.history.length;
+
+    var playerList=PLAYERS.map(function(p){
+      return {name:p,wins:s.players[p].wins,games:s.players[p].games};
+    }).sort(function(a,b){
+      if(b.wins!==a.wins) return b.wins-a.wins;
+      var ar=a.games?a.wins/a.games:0, br=b.games?b.wins/b.games:0;
+      if(br!==ar) return br-ar;
+      return a.name.localeCompare(b.name,"hu");
+    });
+
+    var pairList=Object.keys(s.pairs).map(function(k){
+      return {name:k,wins:s.pairs[k].wins,games:s.pairs[k].games};
+    }).sort(function(a,b){
+      if(b.wins!==a.wins) return b.wins-a.wins;
+      if(b.games!==a.games) return a.games-b.games;
+      return a.name.localeCompare(b.name,"hu");
+    });
+
+    document.getElementById("topPlayer").textContent=state.history.length ? playerList[0].name : "—";
+    document.getElementById("topPair").textContent=pairList.length ? pairList[0].name : "—";
+
+    var pr=document.getElementById("playerRows");
+    pr.innerHTML="";
+    playerList.forEach(function(x,i){
+      var d=document.createElement("div");
+      d.className="row";
+      d.innerHTML='<div class="name"><span class="rank">'+(i+1)+'</span>'+escapeHtml(x.name)+'</div><div class="num">'+x.wins+'</div><div class="num">'+x.games+'</div>';
+      pr.appendChild(d);
+    });
+
+    var pairRows=document.getElementById("pairRows");
+    if(!pairList.length){
+      pairRows.innerHTML='<div class="empty">Még nincs rögzített mérkőzés.</div>';
+    }else{
+      pairRows.innerHTML="";
+      pairList.forEach(function(x,i){
+        var d=document.createElement("div");
+        d.className="row";
+        d.innerHTML='<div class="name"><span class="rank">'+(i+1)+'</span>'+escapeHtml(x.name)+'</div><div class="num">'+x.wins+'</div><div class="num">'+x.games+'</div>';
+        pairRows.appendChild(d);
+      });
+    }
+  }
+
+  function renderHistory(){
+    var card=document.getElementById("historyCard");
+    if(!state.history.length){
+      card.innerHTML='<div class="empty">Még nincs rögzített mérkőzés.</div>';
+      return;
+    }
+    card.innerHTML="";
+    state.history.slice().reverse().forEach(function(g,idx){
+      var winner=g.winner==="A"?g.teamA:g.teamB;
+      var d=document.createElement("div");
+      d.className="history-item";
+      var dt=new Date(g.ts||Date.now());
+      var n=state.history.length-idx;
+      d.innerHTML=
+        '<div class="history-top"><div class="history-match">'+
+        n+'. '+escapeHtml(pairKey(g.teamA[0],g.teamA[1]))+' <span style="color:#98a3b2">vs</span> '+escapeHtml(pairKey(g.teamB[0],g.teamB[1]))+
+        '</div><div class="history-time">'+dt.toLocaleTimeString("hu-HU",{hour:"2-digit",minute:"2-digit"})+'</div></div>'+
+        '<div class="history-result">Nyertes: '+escapeHtml(pairKey(winner[0],winner[1]))+'</div>'+
+        '<div class="history-sitout">Kimaradt: '+escapeHtml(g.sitout)+'</div>';
+      card.appendChild(d);
+    });
+  }
+
+  function renderAll(){
+    renderGame();
+    renderStats();
+    renderHistory();
+  }
+
+  function switchScreen(id){
+    document.querySelectorAll(".screen").forEach(function(s){s.classList.toggle("active",s.id===id);});
+    document.querySelectorAll(".nav-btn").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-screen")===id);});
+    if(id==="statsScreen") renderStats();
+    if(id==="historyScreen") renderHistory();
+    window.scrollTo(0,0);
+  }
+
+  document.getElementById("winA").addEventListener("click",function(){recordWinner("A");});
+  document.getElementById("winB").addEventListener("click",function(){recordWinner("B");});
+  document.getElementById("undoBtn").addEventListener("click",undo);
+  document.getElementById("redrawBtn").addEventListener("click",redraw);
+  document.getElementById("newTournamentBtn").addEventListener("click",newTournament);
+  document.querySelectorAll(".nav-btn").forEach(function(b){
+    b.addEventListener("click",function(){switchScreen(b.getAttribute("data-screen"));});
+  });
+
+  ensureCurrent();
+  renderAll();
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load",function(){
+      navigator.serviceWorker.register("./sw.js").catch(function(){});
+    });
+  }
+})();
+</script>
+</body>
+</html>
