@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1f3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tollaslabda">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<title>Tollaslabda Sorsoló</title>
+<style>
+:root{--navy:#0b1f3a;--blue:#2867d8;--orange:#ef8a24;--green:#0b9b68;--bg:#f2f5fa;--card:#fff;--text:#142237;--muted:#6e7988;--line:#e2e7ef;--red:#c94848}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}body{padding-bottom:84px}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(#0b1f3a,#153050);color:white;padding:calc(12px + env(safe-area-inset-top)) 18px 14px;box-shadow:0 4px 15px #0002}.brand{font-size:22px;font-weight:850}.sub{font-size:12px;opacity:.75;margin-top:2px}
+main{max-width:950px;margin:auto;padding:18px}.screen{display:none}.screen.active{display:block}.card{background:white;border:1px solid var(--line);border-radius:19px;box-shadow:0 7px 22px #16233712}.title{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:850;margin:4px 2px 10px}
+.setup{padding:18px}.date{font-size:20px;font-weight:850;margin-bottom:5px}.help{font-size:13px;color:var(--muted);line-height:1.45}.players{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0}.player{border:1px solid #d8e0eb;background:#fff;border-radius:14px;min-height:55px;font-weight:850;font-size:17px;color:#35465b}.player.on{background:#eaf2ff;border:2px solid var(--blue);color:#2059ba}.start{width:100%;border:0;border-radius:15px;background:var(--green);color:#fff;min-height:58px;font-size:19px;font-weight:900}.start:disabled{opacity:.45}
+.match{overflow:hidden}.matchhead{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.matchhead strong{font-size:19px}.badge{background:#eef2f7;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800;color:#526176}
+.teams{display:grid;grid-template-columns:1fr;}.team{padding:22px 18px;text-align:center}.team+.team{border-top:1px dashed #d8dfe9}.label{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.a .label{color:var(--blue)}.b .label{color:var(--orange)}.names{font-size:28px;font-weight:900;margin:8px 0 14px}.win{width:100%;min-height:58px;border:0;border-radius:15px;color:#fff;font-size:20px;font-weight:900}.a .win{background:var(--blue)}.b .win{background:var(--orange)}
+.sit{margin-top:12px;padding:14px;text-align:center;background:#fff6d7;border:1px solid #f1dc88;border-radius:15px;font-weight:900;color:#725b0d}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.btn{border:1px solid var(--line);background:white;border-radius:13px;min-height:50px;font-weight:850;color:#33445a}.detail{margin-top:12px;padding:16px}.detail summary{font-weight:900;cursor:pointer}.sets{margin-top:14px;display:grid;gap:10px}.setrow{display:grid;grid-template-columns:68px 1fr 24px 1fr;gap:8px;align-items:center}.setrow label{font-size:13px;font-weight:800;color:var(--muted)}.score{width:100%;font-size:20px;text-align:center;padding:10px 5px;border:1px solid #ccd5e1;border-radius:11px}.saveScore{width:100%;margin-top:12px;min-height:50px;border:0;border-radius:13px;background:#263c5c;color:#fff;font-weight:900}
+.tabs{display:flex;gap:7px;margin-bottom:13px}.tab{flex:1;border:1px solid var(--line);background:white;border-radius:12px;padding:11px;font-weight:850}.tab.on{background:#eaf2ff;border-color:#bfd3f7;color:#245bb7}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:13px}.mini{text-align:center;padding:13px 7px}.mini b{display:block;font-size:21px}.mini span{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase}
+.table{overflow:hidden;margin-bottom:13px}.table h3{font-size:16px;margin:0;padding:14px 15px;border-bottom:1px solid var(--line)}.row{display:grid;grid-template-columns:1fr 55px 55px 58px;gap:5px;padding:11px 14px;border-bottom:1px solid #edf0f5;align-items:center}.row:last-child{border:0}.row.head{font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase;background:#fafbfd}.num{text-align:right;font-weight:800}.nm{font-weight:800}.empty{text-align:center;color:var(--muted);padding:25px}
+.day{padding:14px 15px;border-bottom:1px solid var(--line)}.day:last-child{border:0}.day b{font-size:16px}.day small{display:block;color:var(--muted);margin-top:4px}.danger{color:var(--red)}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fffffff5;border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:flex;justify-content:center;backdrop-filter:blur(12px)}.navin{width:min(950px,100%);display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.nav{border:0;background:transparent;border-radius:11px;padding:7px 2px;color:#788395;font-size:10px;font-weight:850}.nav span{display:block;font-size:20px}.nav.on{background:#edf4ff;color:var(--blue)}
+@media(min-width:700px) and (orientation:landscape){
+ main{padding:20px 24px}.players{grid-template-columns:repeat(5,1fr)}.teams{grid-template-columns:1fr 1fr}.team{padding:32px 28px}.team+.team{border-top:0;border-left:1px dashed #d8dfe9}.names{font-size:34px}.win{min-height:70px;font-size:23px}.match,.sit,.actions,.detail{max-width:900px;margin-left:auto;margin-right:auto}.sit,.actions,.detail{margin-top:12px}.setup{padding:24px}.player{min-height:62px}.summary{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<header><div class="brand">🏸 Tollaslabda Sorsoló</div><div class="sub">iPad mini · napi és összesített eredmények</div></header>
+<main>
+<section id="setupScreen" class="screen active">
+ <div class="title">Új játéknap</div>
+ <div class="card setup">
+  <div id="today" class="date"></div>
+  <div class="help">Válaszd ki az aznap játszó 5 embert. Ötfős játék esetén 5 meccses ciklusban mindenki pontosan egyszer marad ki.</div>
+  <div id="players" class="players"></div>
+  <button id="startBtn" class="start" disabled>Játék indítása</button>
+ </div>
+</section>
+
+<section id="gameScreen" class="screen">
+ <div class="title">Aktuális mérkőzés</div>
+ <div class="card match">
+  <div class="matchhead"><strong>Következő meccs</strong><span id="round" class="badge"></span></div>
+  <div class="teams">
+   <div class="team a"><div class="label">Kék páros</div><div id="teamA" class="names"></div><button class="win" onclick="quickWin('A')">NYERTÜNK</button></div>
+   <div class="team b"><div class="label">Narancs páros</div><div id="teamB" class="names"></div><button class="win" onclick="quickWin('B')">NYERTÜNK</button></div>
+  </div>
+ </div>
+ <div id="sitout" class="sit"></div>
+ <details class="card detail">
+  <summary>Részletes eredmény megadása</summary>
+  <div class="sets">
+   <div class="setrow"><label>1. szett</label><input id="a1" class="score" inputmode="numeric"><b>:</b><input id="b1" class="score" inputmode="numeric"></div>
+   <div class="setrow"><label>2. szett</label><input id="a2" class="score" inputmode="numeric"><b>:</b><input id="b2" class="score" inputmode="numeric"></div>
+   <div class="setrow"><label>3. szett</label><input id="a3" class="score" inputmode="numeric"><b>:</b><input id="b3" class="score" inputmode="numeric"></div>
+  </div>
+  <button class="saveScore" onclick="saveDetailed()">Eredmény mentése</button>
+ </details>
+ <div class="actions"><button class="btn" onclick="redraw()">↻ Új párosítás</button><button class="btn" onclick="undo()">↶ Visszavonás</button></div>
+ <div class="actions"><button class="btn danger" onclick="endDay()" style="grid-column:1/-1">Játéknap befejezése</button></div>
+</section>
+
+<section id="statsScreen" class="screen">
+ <div class="title">Statisztika</div>
+ <div class="tabs"><button id="dayTab" class="tab on" onclick="statsMode='day';renderStats()">Mai játék</button><button id="allTab" class="tab" onclick="statsMode='all';renderStats()">Összesített</button></div>
+ <div class="summary">
+  <div class="card mini"><b id="games">0</b><span>Meccs</span></div>
+  <div class="card mini"><b id="leader">—</b><span>Legjobb játékos</span></div>
+  <div class="card mini"><b id="pairleader" style="font-size:14px">—</b><span>Legjobb páros</span></div>
+ </div>
+ <div class="card table"><h3>Játékosok</h3><div class="row head"><div>Játékos</div><div class="num">Gy.</div><div class="num">M.</div><div class="num">%</div></div><div id="playerRows"></div></div>
+ <div class="card table"><h3>Párosok</h3><div class="row head"><div>Páros</div><div class="num">Gy.</div><div class="num">M.</div><div class="num">%</div></div><div id="pairRows"></div></div>
+</section>
+
+<section id="historyScreen" class="screen"><div class="title">Játéknapok</div><div id="history" class="card"></div></section>
+
+<section id="settingsScreen" class="screen">
+ <div class="title">Adatok</div>
+ <div class="card setup">
+  <div class="help">Az adatok ezen az iPaden maradnak. Biztonsági mentéshez exportálhatod őket egy fájlba, később pedig visszaimportálhatod.</div>
+  <div class="actions"><button class="btn" onclick="exportData()">Biztonsági mentés</button><button class="btn" onclick="document.getElementById('importFile').click()">Visszaállítás</button></div>
+  <input id="importFile" type="file" accept="application/json" hidden>
+  <div class="actions"><button class="btn danger" onclick="wipeAll()" style="grid-column:1/-1">Összes adat törlése</button></div>
+ </div>
+</section>
+</main>
+<nav><div class="navin">
+<button class="nav on" data-screen="setupScreen"><span>🏸</span>Játék</button>
+<button class="nav" data-screen="statsScreen"><span>📊</span>Statisztika</button>
+<button class="nav" data-screen="historyScreen"><span>🕘</span>Előzmények</button>
+<button class="nav" data-screen="settingsScreen"><span>⚙️</span>Adatok</button>
+</div></nav>
+
+<script>
+var ROSTER=["Marc","Imi","Norbi","Máté","Laci","Emese","Csocsó","Andi","SzZoli","Vendég"];
+var KEY="tollaslabda-v3", statsMode="day";
+function fresh(){return{days:[],active:null}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){return fresh()}}
+var state=load();
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function pairKey(a,b){return[a,b].sort().join(" + ")}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function day(){return state.active}
+function games(scope){if(scope==="day")return day()?day().games:[];var x=[];state.days.forEach(function(d){x=x.concat(d.games)});if(day())x=x.concat(day().games);return x}
+function show(id){document.querySelectorAll(".screen").forEach(function(x){x.classList.toggle("active",x.id===id)});document.querySelectorAll(".nav").forEach(function(x){x.classList.toggle("on",x.dataset.screen===id)});if(id==="statsScreen")renderStats();if(id==="historyScreen")renderHistory();window.scrollTo(0,0)}
+function renderSetup(){
+ document.getElementById("today").textContent=new Date().toLocaleDateString("hu-HU",{year:"numeric",month:"long",day:"numeric"});
+ var box=document.getElementById("players");box.innerHTML="";var sel=[];
+ ROSTER.forEach(function(p){var b=document.createElement("button");b.className="player";b.textContent=p;b.onclick=function(){if(b.classList.contains("on")){b.classList.remove("on");sel=sel.filter(x=>x!==p)}else if(sel.length<5){b.classList.add("on");sel.push(p)}document.getElementById("startBtn").disabled=sel.length!==5};box.appendChild(b)});
+ document.getElementById("startBtn").onclick=function(){startDay(sel)};
+}
+function startDay(sel){
+ state.active={id:Date.now(),date:new Date().toISOString(),players:sel.slice(),games:[],rotation:shuffle(sel),pos:0,current:null};
+ makeMatch();save();renderGame();show("gameScreen")
+}
+function partnerCounts(){
+ var c={};games("all").forEach(function(g){[g.a,g.b].forEach(function(t){var k=pairKey(t[0],t[1]);c[k]=(c[k]||0)+1})});return c
+}
+function recentPenalty(pair){
+ var p=0,gs=games("all").slice(-3),k=pairKey(pair[0],pair[1]);gs.forEach(function(g,i){if(pairKey(g.a[0],g.a[1])===k||pairKey(g.b[0],g.b[1])===k)p+=(i===gs.length-1?5:2)});return p
+}
+function pairings(a){return[[[a[0],a[1]],[a[2],a[3]]],[[a[0],a[2]],[a[1],a[3]]],[[a[0],a[3]],[a[1],a[2]]]]}
+function makeMatch(exclude){
+ var d=day(),sit=d.rotation[d.pos],act=d.players.filter(x=>x!==sit),pc=partnerCounts(),cand=[];
+ pairings(act).forEach(function(ps){var sig=[pairKey(ps[0][0],ps[0][1]),pairKey(ps[1][0],ps[1][1])].sort().join("|"),score=(pc[pairKey(ps[0][0],ps[0][1])]||0)*10+(pc[pairKey(ps[1][0],ps[1][1])]||0)*10+recentPenalty(ps[0])*10+recentPenalty(ps[1])*10+(sig===exclude?150:0)+Math.random()*5;cand.push({a:ps[0],b:ps[1],sit:sit,sig:sig,score:score})});
+ cand.sort((x,y)=>x.score-y.score);d.current=cand[0];save()
+}
+function advance(){
+ var d=day();d.pos++;if(d.pos>=5){var last=d.rotation[4],n=shuffle(d.players);if(n[0]===last){var t=n[0];n[0]=n[1];n[1]=t}d.rotation=n;d.pos=0}makeMatch()
+}
+function renderGame(){if(!day()){show("setupScreen");return}var c=day().current;document.getElementById("teamA").textContent=c.a.join(" + ");document.getElementById("teamB").textContent=c.b.join(" + ");document.getElementById("sitout").textContent="KIMARAD: "+c.sit;document.getElementById("round").textContent=(day().games.length+1)+". meccs";["a1","a2","a3","b1","b2","b3"].forEach(id=>document.getElementById(id).value="")}
+function addGame(winner,sets){
+ var c=day().current;day().games.push({a:c.a.slice(),b:c.b.slice(),sit:c.sit,winner:winner,sets:sets||[],ts:Date.now()});advance();save();renderGame()
+}
+function quickWin(w){addGame(w,[])}
+function saveDetailed(){
+ var sets=[],aw=0,bw=0;
+ for(var i=1;i<=3;i++){var av=document.getElementById("a"+i).value,bv=document.getElementById("b"+i).value;if(av===""&&bv==="")continue;var a=Number(av),b=Number(bv);if(!Number.isFinite(a)||!Number.isFinite(b)||a===b){alert("Ellenőrizd a szetteredményeket.");return}sets.push([a,b]);if(a>b)aw++;else bw++}
+ if(!sets.length||aw===bw){alert("Adj meg legalább egy eldöntött szettet.");return}
+ addGame(aw>bw?"A":"B",sets)
+}
+function redraw(){var old=day().current.sig;makeMatch(old);renderGame()}
+function undo(){var d=day();if(!d||!d.games.length)return;var g=d.games.pop();d.pos=Math.max(0,d.pos-1);d.rotation[d.pos]=g.sit;d.current={a:g.a,b:g.b,sit:g.sit,sig:[pairKey(g.a[0],g.a[1]),pairKey(g.b[0],g.b[1])].sort().join("|")};save();renderGame()}
+function endDay(){if(!day())return;if(confirm("Befejezed a mai játéknapot?")){state.days.push(day());state.active=null;save();renderSetup();show("statsScreen")}}
+function calc(gs){
+ var ps={},pairs={};ROSTER.forEach(p=>ps[p]={w:0,g:0});
+ gs.forEach(function(x){[x.a,x.b].forEach(function(t){t.forEach(p=>ps[p].g++);var k=pairKey(t[0],t[1]);if(!pairs[k])pairs[k]={w:0,g:0};pairs[k].g++});var wt=x.winner==="A"?x.a:x.b;wt.forEach(p=>ps[p].w++);pairs[pairKey(wt[0],wt[1])].w++});
+ return{ps:ps,pairs:pairs}
+}
+function renderStats(){
+ document.getElementById("dayTab").classList.toggle("on",statsMode==="day");document.getElementById("allTab").classList.toggle("on",statsMode==="all");
+ var gs=games(statsMode),s=calc(gs),pl=Object.keys(s.ps).filter(p=>s.ps[p].g).map(p=>({n:p,w:s.ps[p].w,g:s.ps[p].g})).sort((a,b)=>b.w-a.w||b.w/b.g-a.w/a.g),pa=Object.keys(s.pairs).map(p=>({n:p,w:s.pairs[p].w,g:s.pairs[p].g})).sort((a,b)=>b.w-a.w||b.w/b.g-a.w/a.g);
+ document.getElementById("games").textContent=gs.length;document.getElementById("leader").textContent=pl.length?pl[0].n:"—";document.getElementById("pairleader").textContent=pa.length?pa[0].n:"—";
+ document.getElementById("playerRows").innerHTML=pl.length?pl.map(x=>'<div class="row"><div class="nm">'+x.n+'</div><div class="num">'+x.w+'</div><div class="num">'+x.g+'</div><div class="num">'+Math.round(100*x.w/x.g)+'%</div></div>').join(""):'<div class="empty">Nincs eredmény.</div>';
+ document.getElementById("pairRows").innerHTML=pa.length?pa.map(x=>'<div class="row"><div class="nm">'+x.n+'</div><div class="num">'+x.w+'</div><div class="num">'+x.g+'</div><div class="num">'+Math.round(100*x.w/x.g)+'%</div></div>').join(""):'<div class="empty">Nincs eredmény.</div>'
+}
+function renderHistory(){
+ var all=state.days.slice();if(day())all.push(day());all.sort((a,b)=>b.id-a.id);
+ document.getElementById("history").innerHTML=all.length?all.map(function(d){var dt=new Date(d.date).toLocaleDateString("hu-HU",{year:"numeric",month:"long",day:"numeric"});return'<div class="day"><b>'+dt+'</b><small>'+d.players.join(", ")+' · '+d.games.length+' mérkőzés</small></div>'}).join(""):'<div class="empty">Még nincs korábbi játéknap.</div>'
+}
+function exportData(){var blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="tollaslabda-mentes-"+new Date().toISOString().slice(0,10)+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+document.getElementById("importFile").onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var x=JSON.parse(r.result);if(!x.days)throw 0;if(confirm("A visszaállítás lecseréli a jelenlegi adatokat. Folytatod?")){state=x;save();location.reload()}}catch(err){alert("Nem megfelelő mentési fájl.")}};r.readAsText(f)}
+function wipeAll(){if(confirm("Biztosan törlöd az összes játéknapot és eredményt?")){localStorage.removeItem(KEY);state=fresh();location.reload()}}
+document.querySelectorAll(".nav").forEach(function(b){b.onclick=function(){var id=b.dataset.screen;if(id==="setupScreen"&&day())id="gameScreen";show(id)}});
+renderSetup();if(day()){renderGame();show("gameScreen")}else show("setupScreen");
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body></html>
